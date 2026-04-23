@@ -9,10 +9,7 @@ bot_token = sys.argv[3]
 chat_id = sys.argv[4]
 
 # Wallhaven API 搜索地址
-#url = f"https://wallhaven.cc/api/v1/search?q={keyword}&categories=110&purity=100"
-# categories=111 表示开启全部三类：常规、动漫、人物
-# sorting=relevance 表示按相关性排序
-url = f"https://wallhaven.cc/api/v1/search?q={keyword}&categories=111&purity=100&sorting=relevance"
+url = f"https://wallhaven.cc/api/v1/search?q={keyword}&categories=110&purity=100"
 os.makedirs("./images", exist_ok=True)
 
 try:
