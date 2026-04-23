@@ -1,11 +1,11 @@
-name: Auto Image Spider
+name: TG Image Sender
 
 on:
   repository_dispatch:
     types: [web_crawl]
 
 jobs:
-  run-spider:
+  send-images:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -16,20 +16,13 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Dependencies
+      - name: Install Requests
         run: pip install requests
 
-      - name: Execute Scraper
-        # 从 Workers 传来的 payload 获取关键词(keyword)和数量(num)
+      - name: Run Scraper and Send to TG
         run: |
-          python main.py "${{ github.event.client_payload.keyword }}" ${{ github.event.client_payload.num }}
-
-      - name: Setup Rclone
-        uses: AnimMouse/setup-rclone@v1
-        with:
-          rclone_config: ${{ secrets.RCLONE_CONFIG }}
-
-      - name: Move to GDrive
-        # 移动文件到网盘，文件夹按关键词分类
-        run: |
-          rclone move ./images "gdrive:/美女图片/网站抓取/${{ github.event.client_payload.keyword }}" --delete-empty-src-dirs
+          # 传入：关键词、数量、机器人Token(从Secret读取)、ChatID(从Payload读取)
+          python main.py "${{ github.event.client_payload.keyword }}" \
+                         ${{ github.event.client_payload.num }} \
+                         "${{ secrets.TELEGRAM_BOT_TOKEN }}" \
+                         "${{ github.event.client_payload.chat_id }}"
